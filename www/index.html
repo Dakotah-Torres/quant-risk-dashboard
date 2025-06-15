@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="'en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quant Risk Dashboard</title>
+</head> 
+<body>
+    <h1>Risk Calculator</h1>
+
+    <form id="trade-form">
+        Entry Price:   <input type="number" id="entry" placeholder="Entry Price" step="any"><br>
+        Stop Price:    <input type="number" id="stop" placeholder="Stop Price" step="any"><br>
+        Take Profit:   <input type="number" id="target" placeholder="Target Price" step="any"><br>
+        Account Size:  <input type="number" id="account_size" placeholder="Account Size" step="any"><br>
+        Risk Percent:  <input type="number" id="risk_pct" placeholder="Risk Percent" step="any"><br>
+        Tick Value:    <input type="number" id="tick_value" placeholder="Tick Value" step="any"><br>
+        Contract Cost: <input type="number" id="cost" placeholder="Cost per Contract" step="any"><br>
+        <button type="submit">Calulate</button>
+    </form>
+
+    <pre id="output">Results will appear here...</pre>
+
+    <script type="module" src="./app.js"></script>
+
+
+</body>
+
+</html>

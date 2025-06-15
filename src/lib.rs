@@ -14,6 +14,7 @@ pub struct TradeParams {
 
 #[wasm_bindgen]
 impl TradeParams {
+    #[wasm_bindgen(constructor)]
     pub fn new(entry: f64, stop: f64, target: f64, account_size: f64, risk_pct: f64, tick_value: f64, cost_per_contract: f64) -> TradeParams {
         TradeParams { 
             entry, 
@@ -44,16 +45,22 @@ pub struct RiskResult {
     pub rr_ratio: f64,
     pub total_risk: f64,
     pub total_reward: f64,
-    pub break_even_price: f64
+    pub break_even_price: f64,
+    pub total_trade_cost: f64,
+    pub total_tick_risk: f64,
+    pub total_tick_reward: f64
 }
 
 #[wasm_bindgen]
 pub fn calculate_risk(params: &TradeParams) -> RiskResult { 
-    let risk_per_contract: f64 = ((params.entry - params.stop)/0.25).abs() * params.tick_value;
-    let reward_per_contract: f64 = ((params.entry - params.target)/0.25).abs() * params.tick_value;
+    let total_tick_risk: f64 = ((params.entry - params.stop)/0.25).abs();
+    let total_tick_reward: f64 = ((params.entry - params.target)/0.25).abs();
+
+    let risk_per_contract: f64 = total_tick_risk * params.tick_value;
+    let reward_per_contract: f64 = total_tick_reward * params.tick_value;
 
     let max_risk: f64 = params.account_size * (params.risk_pct / 100.0);
-    let contracts: f64 = (max_risk / risk_per_contract).floor(); 
+    let contracts: f64 = (max_risk / risk_per_contract).floor().max(1.0); 
 
 
     let rr_ratio: f64 = reward_per_contract / risk_per_contract;
@@ -66,6 +73,9 @@ pub fn calculate_risk(params: &TradeParams) -> RiskResult {
         false => params.entry - (contracts * params.cost_per_contract)
     };
 
+    let total_trade_cost: f64 = contracts * params.cost_per_contract;
+    
+
 
     RiskResult { 
         risk_per_contract, 
@@ -74,9 +84,13 @@ pub fn calculate_risk(params: &TradeParams) -> RiskResult {
         rr_ratio,
         total_risk,
         total_reward,
-        break_even_price
+        break_even_price,
+        total_trade_cost,
+        total_tick_reward,
+        total_tick_risk
     }
 }
+
 
 #[cfg(test)]
 mod tests{
